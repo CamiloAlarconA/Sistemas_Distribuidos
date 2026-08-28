@@ -14,11 +14,6 @@ let messages = {};
 let serverProcess = {};
 let nextPort = 4000;
 
-//GET ROOT
-app.get("/", (req, res) => {
-  res.send("Bienvenido al middleware de Camilo A");
-});
-
 //REGISTER SERVER
 app.post("/register", (req, res) => {
   const { name, url } = req.body;
@@ -167,4 +162,94 @@ app.get("/send-message/:name", (req, res) => {
 
     messages: messages[name] || [],
   });
+});
+
+//GET ROOT - INTERFAZ
+app.get("/", (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Middleware - Monitor</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #1e1e1e; color: #eee; padding: 20px; }
+  h1, h2 { color: #4fc3f7; }
+  .panel { background: #2a2a2a; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #444; }
+  .msg { border-left: 3px solid #4fc3f7; padding: 6px 10px; margin-bottom: 6px; background: #333; border-radius: 4px; }
+  .msg small { color: #999; display: block; }
+  .empty { color: #888; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Monitor del Middleware</h1>
+
+<div class="panel">
+  <h2>Servidores conectados</h2>
+  <table>
+    <thead>
+      <tr><th>Nombre</th><th>URL</th><th>Último heartbeat</th></tr>
+    </thead>
+    <tbody id="servers-body"></tbody>
+  </table>
+</div>
+
+<div class="panel">
+  <h2>Mensajes recibidos</h2>
+  <div id="messages-container"></div>
+</div>
+
+<script>
+  const REFRESH_MS = 3000;
+
+  async function fetchServers() {
+    const res = await fetch("/servers");
+    return res.json();
+  }
+
+  async function fetchMessages(name) {
+    const res = await fetch(\`/send-message/\${name}\`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.messages || []).map(m => ({ ...m, server: name }));
+  }
+
+  async function refresh() {
+    const servers = await fetchServers();
+
+    const tbody = document.getElementById("servers-body");
+    tbody.innerHTML = servers.length
+      ? servers.map(s => \`
+          <tr>
+            <td>\${s.name}</td>
+            <td>\${s.url}</td>
+            <td>\${new Date(s.lastHeartbeat).toLocaleTimeString()}</td>
+          </tr>
+        \`).join("")
+      : \`<tr><td colspan="3" class="empty">No hay servidores conectados</td></tr>\`;
+
+    const allMessages = (await Promise.all(servers.map(s => fetchMessages(s.name)))).flat();
+    allMessages.sort((a, b) => new Date(b.receivedAt) - new Date(a.receivedAt));
+
+    const container = document.getElementById("messages-container");
+    container.innerHTML = allMessages.length
+      ? allMessages.map(m => \`
+          <div class="msg">
+            <strong>\${m.server}</strong>: \${m.message}
+            <small>\${new Date(m.receivedAt).toLocaleString()}</small>
+          </div>
+        \`).join("")
+      : \`<p class="empty">No hay mensajes</p>\`;
+  }
+
+  refresh();
+  setInterval(refresh, REFRESH_MS);
+</script>
+
+</body>
+</html>
+  `);
 });
