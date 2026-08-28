@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-const PORT = 3000;
+const PORT =  3000;
 
 //ALMACENAMIENTO EN MEMORIA
 let servers = {};
@@ -33,7 +33,7 @@ app.post("/register", (req, res) => {
 });
 
 //HEARTBEAT
-app.post("/heartbeat/:name", (req, res) => {
+app.post("/pulse/:name", (req, res) => {
   const { name } = req.params;
 
   if (servers[name]) {

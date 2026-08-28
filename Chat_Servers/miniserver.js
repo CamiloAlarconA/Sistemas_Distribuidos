@@ -8,7 +8,7 @@ app.use(express.json());
 const PORT = process.argv[2];
 const NAME = process.argv[3];
 
-const MIDDLEWARE_URL = "http://localhost:3000";
+const MIDDLEWARE_URL = "https://yodel-posting-resubmit.ngrok-free.dev";
 
 let pulseInterval;
 
@@ -42,7 +42,7 @@ app.listen(PORT, async () => {
 
     pulseInterval = setInterval(async () => {
       try {
-        await axios.post(`${MIDDLEWARE_URL}/heartbeat/${NAME}`);
+        await axios.post(`${MIDDLEWARE_URL}/pulse/${NAME}`);
         console.log("Pulso enviado");
       } catch (error) {
         console.log("Error al enviar pulso");
