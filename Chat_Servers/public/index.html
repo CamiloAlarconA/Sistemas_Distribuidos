@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Distribuido</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Sistema Distribuido</h1>
+      <p>Coordinadores dinámicos — Algoritmo Bully</p>
+    </header>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Mi nodo</h2>
+        <div class="info"><b>ID:</b> <span id="nodeId">-</span></div>
+        <div class="info"><b>URL:</b> <span id="nodeUrl">-</span></div>
+        <div class="info"><b>Rol:</b> <span id="nodeRole">-</span></div>
+        <div class="info"><b>Coordinador:</b> <span id="coordinator">-</span></div>
+        <div class="info"><b>Término:</b> <span id="term">-</span></div>
+        <div class="info"><b>Estado:</b> <span id="electionState">-</span></div>
+      </div>
+
+      <div class="panel">
+        <h2>Conectar coordinador</h2>
+
+        <label for="peerId">ID del servidor</label>
+        <input id="peerId" placeholder="Ej: B">
+
+        <label for="peerUrl">URL ngrok</label>
+        <input id="peerUrl" placeholder="https://xxxxx.ngrok-free.app">
+
+        <button id="connectButton">Conectar</button>
+
+        <p class="help">
+          Introduce el ngrok real de otro servidor.
+          El servidor se comprueba antes de aparecer en la lista.
+        </p>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="electionButton">Iniciar elección</button>
+      <button id="refreshButton">Actualizar</button>
+      <button id="clearButton">Limpiar eventos</button>
+    </section>
+
+    <section class="stats grid">
+      <div class="stat">
+        <span>Coordinadores</span>
+        <strong id="coordinatorCount">0</strong>
+      </div>
+      <div class="stat">
+        <span>Conectados</span>
+        <strong id="connectedCount">0</strong>
+      </div>
+      <div class="stat">
+        <span>Workers</span>
+        <strong id="workerCount">0</strong>
+      </div>
+      <div class="stat">
+        <span>Eventos</span>
+        <strong id="messageCount">0</strong>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Coordinadores conectados</h2>
+      <div id="peers"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Servidores de trabajo</h2>
+      <div id="workers"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Eventos</h2>
+      <div id="messages"></div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
